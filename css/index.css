@@ -1,0 +1,887 @@
+/*organización del reset con ayuda de IA*/
+:root{
+    --color-b: #e4c814;
+    --color-m: #094678;
+    --color-s: #606060;
+
+    --font-b: 'Pattaya', sans-serif;
+    --font-m: 'Mulish', sans-serif;
+    --font-s: 'Mulish', sans-serif;
+
+    --font-b-size: 2rem;
+    --font-m-size: 1.15rem;
+    --font-s-size: 1rem;
+
+    --font-b-weight: 100;
+    --font-m-weight: 800;
+    --font-s-weight: 400;
+
+    --text-cap: capitalize;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+body{
+    font-weight: 400;
+    font-style: normal;
+}
+
+li{
+    list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+    display: block;
+}
+
+p a{
+    display: inline;
+}
+
+img, picture, video, iframe, svg{
+    display: block;
+    width: 100%;
+}
+
+svg{
+    fill: currentColor;
+}
+
+
+
+/*loader - pantalla de carga*/
+.loader{
+    background-color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+
+    animation: fading 1.5s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes fading {
+    0%, 80% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.loader-background{
+    height: 100vh;
+    object-fit: cover;
+}
+
+.loader-text{
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+
+    position: absolute;
+}
+
+.loader-name{
+    font-family: var(--font-b);
+    font-size: var(--font-b-size);
+    text-transform: var(--text-cap);
+    color: var(--color-b);
+}
+
+.loader-animation{
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    text-transform: var(--text-cap);
+    color: var(--color-s);
+
+    animation: load 1s linear infinite;
+}
+
+@keyframes load {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.1; }
+}
+
+
+
+/*top-anchor - boton para llevar a parte superior de pantalla*/
+.scroll-top{
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--color-m);
+    color: var(--color-b);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+    
+    position: fixed;
+    right: 6rem;
+    bottom: 6rem;
+    
+    transition: transform .6s ease;
+}
+
+.scroll-top:hover{
+    transform: rotate(360deg);
+}
+
+.scroll-top svg{
+    width: 1.5rem;
+    height: 1.5rem;
+
+    transform: rotate(-90deg) translateX(.1rem);
+}
+
+/*top-anchor - media para ajustar boton (a parte superior) a tablet y móvil*/
+@media (max-width: 1025px){
+    .scroll-top{
+        width: 2rem;
+        height: 2rem;
+
+        right: 4rem;
+        bottom: 6rem;
+    }
+    .scroll-top svg{
+    width: 1.5rem;
+    height: 1.5rem;
+    }
+}
+
+@media (max-width: 431px){
+    .scroll-top{
+        width: 1.5rem;
+        height: 1.5rem;
+
+        right: 2rem;
+        bottom: 6rem;
+    }
+    .scroll-top svg{
+    width: 1rem;
+    height: 1rem;
+    }
+}
+
+
+
+/*header - encabezado con menu*/
+.header{
+    background-color: white;
+
+    margin: 0 6rem;
+    padding: 1rem 0;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    font-weight: var(--font-b-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-s);
+
+    border-bottom: .1rem var(--color-b) solid;
+}
+
+.header-nav{
+    width: 100%;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo-name{
+    font-family: var(--font-b);
+    font-size: var(--font-b-size);
+    color: var(--color-b);
+}
+
+.header-logo-archviz{
+    font-family: var(--font-m);
+    font-size: var(--font-m-size);
+    font-weight: var(--font-m-weight);
+    color: var(--color-m);
+}
+
+/*header - menu burger*/
+.header-burger{
+    font-size: 2rem;
+    color: var(--color-m);
+    cursor: pointer;
+
+
+    position: relative;
+
+    transition: transform .6s ease;
+}
+
+/*header - menu burger rota las 3 líneas con js*/
+.header-burger.isOn{
+    transform: rotate(90deg);
+}
+
+.header-list{
+    background-color: var(--color-m);
+
+    padding: 1rem 2rem;
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    position: absolute;
+    top: 5rem;
+    right: 0;
+
+    line-height: 2rem;
+    border-radius: .25rem;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity .4s ease;
+}
+
+/*header - menu burger isActive para uso con js*/
+.header-list.isActive{
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.header-list-item{
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    font-weight: var(--font-s-weight);
+    color: var(--color-b);
+
+    transition: color .4s ease;
+}
+
+.header-list-item:hover{
+    color: var(--color-text);
+}
+
+/*header - media para ajustar header a tablet y móvil*/
+@media (max-width: 1025px){
+    .header{
+        margin: 1rem 4rem;
+    }
+}
+
+@media (max-width: 431px){
+    .header{
+        margin: .25rem 2rem;
+    }
+    .header-logo-archviz{
+        font-size: .75rem;
+    }
+    .header-list{
+        padding: .5rem 1rem;
+        line-height: 1.5rem;
+    }
+    .header-list-item{
+        font-size: .75rem;
+    }
+}
+
+
+
+/*main/works - contenido principal, grid general para proyectos*/
+.works{
+    margin: 1rem 6rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+}
+
+/*works - secciones para cada proyecto */
+.works-project{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+}
+
+.works-project-cover{
+    width: 100%;
+    /*buscando en la mdn encontré el aspect ratio, similar a un concepto que manejo en archviz*/
+    aspect-ratio: 4/3;
+    overflow: hidden;
+
+    position: relative;
+
+    border-radius: .25rem;
+}
+
+.works-project-cover img, .works-project-video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    position: absolute;
+
+    transition: opacity 0.6s ease, filter 0.6s ease;
+}
+
+/*works - opacidad de 0 al video para luego cambiarla a 1 con hover*/
+.works-project-video{
+    display: none;
+}
+
+.works-project:hover .works-project-video{
+    display: block;
+    filter: brightness(.5);
+}
+
+.works-project:hover .works-project-cover img{
+    filter: brightness(.5);
+}
+
+/*works - transition ease de .6s para texto de cada proyecto*/
+.works-project-overlay{
+    background-color: var(--color-b);
+    padding: .5rem;
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    position: absolute;
+
+    border-radius: .25rem;
+    
+    opacity: 0;
+    transition: opacity .6s ease;
+}
+
+/*works - opacidad de 1 para ver el texto al pasar puntero*/
+.works-project:hover .works-project-overlay{
+    opacity: 1;
+}
+
+.works-project-title{
+    font-family: var(--font-m);
+    font-size: var(--font-m-size);
+    font-weight: var(--font-m-weight);
+    color: var(--color-m);
+    text-transform: var(--text-cap);
+
+    transition: color .6s ease;
+}
+
+.works-project-overlay:hover .works-project-title{
+    color: var(--color-s);
+}
+
+/*works - media para ajustar works/main a tablet y móvil*/
+@media (max-width: 1025px){
+    .works{
+        margin: 0 4rem 1rem;
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 431px){
+    .works{
+        margin: 0 2rem 1rem;
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/*footer - pie de página con rrss*/
+.footer{
+    margin: 0 6rem;
+
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+
+    border-top: .1rem var(--color-b) solid;
+}
+
+.footer-rrss{
+    margin: 1rem;
+
+    display: flex;
+    gap: .5rem;
+
+    text-align: center;
+
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    font-weight: var(--font-s-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-b);
+}
+
+/*footer - transition para cada red social cuando pasa puntero sobre el texto*/
+.footer-rrss-linkedin, .footer-rrss-behance{
+    width: 3rem;
+    background-color: var(--color-m);
+    padding: .5rem;
+    border-radius: .25rem;
+
+    transition: color .6s ease;
+}
+
+.footer-rrss-linkedin:hover, .footer-rrss-behance:hover{
+    color: var(--color-s);
+}
+
+/*footer - información básica*/
+.footer-information{
+    width: 100%;
+
+    padding: .5rem 0;
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    font-weight: var(--font-s-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-s);
+}
+
+/*footer - media para ajustar footer a tablet y móvil*/
+@media (max-width: 1025px){
+    .footer{
+        margin: 0 4rem;
+        flex-flow: row-reverse;
+    }
+    .footer-rrss{
+        margin: .5rem 0;
+        gap: .25rem;
+        grid-template-columns: 1fr;
+    }
+    .footer-rrss-linkedin, .footer-rrss-behance{
+    width: 2.5rem;
+    }
+}
+
+@media (max-width: 431px){
+    .footer{
+        margin: 0 2rem;
+        flex-flow: row-reverse;
+        gap: .25rem;
+    }
+    .footer-rrss{
+        margin: .5rem 0;
+        gap: .25rem;
+
+        font-size: .75rem;
+    }
+    .footer-rrss-linkedin, .footer-rrss-behance{
+    width: 2rem;
+    }
+    .footer-information{
+        font-size: .75rem;
+    }
+}
+
+
+
+/*work - contenido de cada proyecto con su html por aparte*/
+.work{
+    margin: 2rem 6rem 2rem;
+    padding: 1rem;
+
+    border-radius: .25rem;
+}
+
+.work-project{
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+/*work - carrousel parametros base*/
+.work-project-carrousel{
+    width: 100%;
+    max-width: 70rem;
+
+    aspect-ratio: 16/9;
+    overflow: visible;
+    position: relative;
+}
+
+/*work - carrousel configuracion de los botones laterales*/
+.work-project-carrousel button{
+    width: 3rem;
+    height: 3rem;
+    background-color: #1A5A6D4D;
+    color: var(--color-b);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    z-index: 2;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+/*work - carrousel ubicación de los botones laterales*/
+.work-project-carrousel .work-project-prev{
+    left: -1.5rem;
+}
+
+.work-project-carrousel .work-project-next{
+    right: -1.5rem;
+}
+
+/*work - carrousel transición de los botones laterales*/
+.work-project-prev, .work-project-next{
+    transition: background-color .6s ease;
+}
+
+.work-project-prev:hover, .work-project-next:hover{
+    background-color: var(--color-m);
+}
+
+/*work - carrousel rotacion de los botones laterales*/
+.work-project-prev svg{
+    width: 1.5rem;
+    height: 1.5rem;
+
+    transform: rotate(-180deg) translateX(.1rem);
+}
+
+.work-project-next svg{
+    width: 1.5rem;
+    height: 1.5rem;
+
+    transform: translateX(.1rem);
+}
+
+/*work - carrousel imagenes dentro del container*/
+.work-project-carrousel img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+
+    position: absolute;
+
+    border-radius: .25rem;
+
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+
+/*work - isActive para el js con opacidad*/
+.work-project-carrousel img.isActive{
+    opacity: 1;
+}
+
+.work-project-block{
+    max-width: 70rem;
+    margin: 1rem 0 0;
+
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.work-project-video video{
+    border-radius: .25rem;
+}
+
+.work-project-description{
+    background-color: var(--color-b);
+    padding: .1rem;
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    
+    border-radius: .25rem;
+}
+
+.work-project-title{
+    font-family: var(--font-m);
+    font-size: var(--font-m-size);
+    font-weight: var(--font-m-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-m);
+}
+
+.work-project-text{
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    font-weight: var(--font-s-weight);
+    color: var(--color-m);
+
+    text-align: center;
+}
+
+.work-project-text::first-letter{
+    text-transform: var(--text-cap);
+}
+
+/*work - media para ajustar work (proyectos individuales) a tablet y móvil*/
+@media (max-width: 1025px){
+    .work{
+        margin: 0 4rem 1rem;
+    }
+    .work-project-carrousel button{
+        width: 2rem;
+        height: 2rem;
+    }
+    .work-project-carrousel .work-project-prev{
+    left: -1rem;
+    }
+    .work-project-carrousel .work-project-next{
+    right: -1rem;
+    }
+    .work-project-prev svg{
+    width: 1.25rem;
+    height: 1.25rem;
+    }
+    .work-project-next svg{
+    width: 1.25rem;
+    height: 1.25rem;
+    }
+}
+
+@media (max-width: 431px){
+    .work{
+        margin: 0 2rem 1rem;
+    }
+    .work-project-carrousel button{
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    .work-project-carrousel .work-project-prev{
+    left: -.75rem;
+    }
+    .work-project-carrousel .work-project-next{
+    right: -.75rem;
+    }
+    .work-project-prev svg{
+    width: 1rem;
+    height: 1rem;
+    }
+    .work-project-next svg{
+    width: 1rem;
+    height: 1rem;
+    }
+    .work-project-title{
+    font-size: .75rem;
+    }
+    .work-project-text{
+    font-size: .75rem;
+    }
+}
+
+
+
+/* about - descripción de perfil como arquitecto */
+.about{
+    margin: 1rem 6rem;
+}
+
+.about-container{
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: 1rem;
+
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    color: var(--color-s);
+}
+
+.about-background{
+    max-width: 45rem;
+}
+
+.about-background img{
+    border-radius: .25rem;
+    object-fit: cover;
+}
+
+.about-text{
+    max-width: 45rem;
+    background-color: var(--color-b);
+
+    padding: 1rem;
+    text-align: justify;
+
+    border-radius: .25rem;
+}
+
+.about-text-title{
+    margin: 0 0 1rem;
+
+    font-family: var(--font-m);
+    font-size: var(--font-m-size);
+    font-weight: var(--font-m-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-m);
+}
+
+.about-text-description{
+    margin: 0 0 1rem 0;
+}
+
+.about-text-description::first-letter{
+    text-transform: var(--text-cap);
+}
+
+/*about - media para ajustar about a tablet y móvil*/
+@media (max-width: 1025px){
+    .about{
+        margin: 1rem 4rem;
+    }
+    .about-container{
+        gap: .75rem;
+    }
+}
+
+@media (max-width: 431px){
+    .about{
+        margin: .5rem 2rem;
+    }
+    .about-container{
+        gap: .5rem;
+    }
+    .about-text{
+        font-size: .75rem;
+    }
+}
+
+
+
+/*contat - pagina de contacto con form */
+.contact{
+    margin: 0 6rem;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+.contact-title{
+    margin: 1rem 0;
+
+    font-family: var(--font-b);
+    font-size: var(--font-b-size);
+    font-weight: var(--font-b-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-m);
+}
+
+
+
+/*contat - formulario simple con 3 labels */
+.contact-form{
+    margin: 2rem 0;
+
+    display: flex;
+    flex-flow: column;
+    gap: 2rem;
+
+    font-family: var(--font-m);
+    font-size: var(--font-m-size);
+    font-weight: var(--font-m-weight);
+    text-transform: var(--text-cap);
+}
+
+.contact-form label{
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    color: var(--color-b);
+}
+
+.contact-form textarea, .contact-form input{
+    width: 100%;
+    max-width: 35rem;
+    padding: 1rem;
+    border-radius: .25rem;
+    border: .05rem solid var(--color-m);
+
+    font-family: var(--font-s);
+    font-size: var(--font-s-size);
+    font-weight: var(--font-s-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-s);
+}
+
+.contact-form-button{
+    background-color: var(--color-b);
+
+    padding: .5rem;
+
+    font-family: var(--font-b);
+    font-size: var(--font-b-size);
+    font-weight: var(--font-b-weight);
+    text-transform: var(--text-cap);
+    color: var(--color-m);
+
+    border-radius: .25rem;
+
+    cursor: pointer;
+}
+
+/*contact - media para ajustar contact a tablet y móvil*/
+@media (max-width: 1025px){
+    .contact{
+    margin: 0 4rem;
+    }
+    .contact-form textarea, .contact-form input{
+    max-width: 25rem;
+    } 
+}
+
+@media (max-width: 431px){
+    .contact{
+    margin: 0 2rem;
+    }
+    .contact-form textarea, .contact-form input{
+    max-width: 15rem;
+    } 
+}
